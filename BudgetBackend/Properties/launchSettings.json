@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "BudgetBackend": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:58968;http://localhost:58969"
+    }
+  }
+}

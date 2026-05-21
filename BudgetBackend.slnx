@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Am.ApplicationCore/Am.ApplicationCore.csproj" />
+  <Project Path="Am.Infrastructure/Am.Infrastructure.csproj" />
+  <Project Path="BudgetBackend/BudgetBackend.csproj" />
+</Solution>

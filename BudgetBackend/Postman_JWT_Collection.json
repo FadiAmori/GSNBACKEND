@@ -1,0 +1,678 @@
+{
+  "info": {
+    "name": "Budget API - JWT Authentication",
+    "description": "Collection Postman pour tester l'authentification JWT",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('admin_token', jsonData.token);",
+                  "    pm.environment.set('admin_id', jsonData.id);",
+                  "    console.log('Admin token saved');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/admin/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "admin",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Societe Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('societe_token', jsonData.token);",
+                  "    pm.environment.set('societe_id', jsonData.id);",
+                  "    console.log('Societe token saved');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"societe@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/societe/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "societe",
+                "login"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Operations",
+      "item": [
+        {
+          "name": "Get All Admins",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/admin",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "admin"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Admin by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/admin/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "admin",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newadmin@example.com\",\n  \"password\": \"securepass123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/admin",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "admin"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Societe Operations",
+      "item": [
+        {
+          "name": "Get All Societes (Admin only)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/societe",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "societe"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Own Societe (Societe)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{societe_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/societe/{{societe_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "societe",
+                "{{societe_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Own Societe (Societe)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{societe_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{societe_id}},\n  \"email\": \"societe@example.com\",\n  \"password\": \"newpassword\",\n  \"name\": \"Updated Company Name\",\n  \"active\": true\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/societe/{{societe_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "societe",
+                "{{societe_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "LigneFinanciere Operations",
+      "item": [
+        {
+          "name": "Get All LigneFinanciere",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{societe_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/lignefinanciere",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "lignefinanciere"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create LigneFinanciere",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{societe_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Nouvelle ligne financi�re\",\n  \"montant\": 1500.50,\n  \"quantite\": 10\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/lignefinanciere",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "lignefinanciere"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Montant (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{societe_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "2000.75"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/lignefinanciere/1/montant",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "lignefinanciere",
+                "1",
+                "montant"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete LigneFinanciere (Admin only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/lignefinanciere/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "lignefinanciere",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Produit Operations",
+      "item": [
+        {
+          "name": "Get All Produits",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{societe_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/produit",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "produit"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Produit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{societe_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nouveau Produit\",\n  \"description\": \"Description du produit\",\n  \"price\": 99.99\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/produit",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "produit"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "UserSociete Operations",
+      "item": [
+        {
+          "name": "Get All UserSociete of Own Company (Societe)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{societe_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/usersociete",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "usersociete"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create UserSociete",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{societe_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@company.com\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"societeId\": {{societe_id}}\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/usersociete",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "usersociete"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Password Reset",
+      "item": [
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"societe@example.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/societe/forgot-password",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "societe",
+                "forgot-password"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"societe@example.com\",\n  \"newPassword\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/societe/reset-password",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "societe",
+                "reset-password"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "RapportFinancier Operations",
+      "item": [
+        {
+          "name": "Get All RapportFinancier (Admin only)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/rapportfinancier",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "rapportfinancier"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All RapportFinancier by Societe",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{societe_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/rapportfinancier/societe/{{societe_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "rapportfinancier",
+                "societe",
+                "{{societe_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get RapportFinancier by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{societe_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/rapportfinancier/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "rapportfinancier",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "admin_token",
+      "value": ""
+    },
+    {
+      "key": "admin_id",
+      "value": ""
+    },
+    {
+      "key": "societe_token",
+      "value": ""
+    },
+    {
+      "key": "societe_id",
+      "value": ""
+    }
+  ]
+}

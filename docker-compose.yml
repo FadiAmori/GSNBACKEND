@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: budgetapp123!
+      POSTGRES_DB: Budget
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  budgetbackend:
+    build:
+      context: .
+      dockerfile: ./BudgetBackend/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=Budget;Username=postgres;Password=budgetapp123!"
+      JwtSettings__SecretKey: "your-super-secret-key-that-is-at-least-32-characters-long-for-hs256"
+      JwtSettings__Issuer: "BudgetBackend"
+      JwtSettings__Audience: "BudgetApp"
+      Cors__AllowedOrigins__0: "http://localhost:4200"
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  postgres_data:
