@@ -1,21 +1,21 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy project files from root context
-COPY BudgetBackend/BudgetBackend.csproj BudgetBackend/
-COPY Am.ApplicationCore/Am.ApplicationCore.csproj Am.ApplicationCore/
-COPY Am.Infrastructure/Am.Infrastructure.csproj Am.Infrastructure/
+# Copy csproj files
+COPY BudgetBackend.csproj .
+COPY ../Am.ApplicationCore/Am.ApplicationCore.csproj ../Am.ApplicationCore/
+COPY ../Am.Infrastructure/Am.Infrastructure.csproj ../Am.Infrastructure/
 
-# Restore dependencies
-RUN dotnet restore "BudgetBackend/BudgetBackend.csproj"
+# Restore
+RUN dotnet restore
 
-# Copy remaining source code
+# Copy everything
 COPY . .
 
 # Publish
-WORKDIR "/src/BudgetBackend"
-RUN dotnet publish "BudgetBackend.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish -c Release -o /app/publish
 
+# Runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
