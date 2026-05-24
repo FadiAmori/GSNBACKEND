@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Am.ApplicationCore.Domain;
 using Am.ApplicationCore.Interfaces;
+using Am.ApplicationCore.DTOs;
 using System.Collections.Generic;
 using System.Security.Claims;
 
@@ -65,18 +66,70 @@ namespace BudgetBackend.Controllers
             return Ok(rapport);
         }
 
-        [Authorize(Roles = "Admin")]
+        // POST: api/RapportFinancier
+        // Used by Societe users to create a report for their own company
+        [Authorize(Roles = "Societe")]
         [HttpPost]
-        public ActionResult<RapportFinancier> Create([FromBody] RapportFinancier rapport)
+        public ActionResult Create([FromBody] RapportFinancierCreateDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (!int.TryParse(userIdClaim, out int societeId))
                 return Unauthorized();
 
-            rapport.SocieteId = societeId;
-            _serviceRapportFinancier.Add(rapport);
-            _serviceRapportFinancier.Commit();
-            return CreatedAtAction(nameof(GetById), new { id = rapport.Id }, rapport);
+            var rapport = new RapportFinancier
+            {
+                Annee = dto.Annee,
+                Type = dto.Type,
+                SocieteId = societeId
+            };
+
+            try
+            {
+                _serviceRapportFinancier.Add(rapport);
+                _serviceRapportFinancier.Commit();
+                return CreatedAtAction(nameof(GetById), new { id = rapport.Id }, new { id = rapport.Id });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(500, new { error = "Erreur serveur lors de la création du rapport.", detail = ex.Message, inner = ex.InnerException?.Message });
+            }
+        }
+
+        // POST: api/RapportFinancier/societe/5  (Admin only)
+        // Admin-only: create a report FOR the given societeId
+        [Authorize(Roles = "Admin")]
+        [HttpPost("societe/{societeId:int}")]
+        public ActionResult CreateForSociete(int societeId, [FromBody] RapportFinancierCreateDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var societe = _serviceSociete.GetById(societeId);
+            if (societe == null)
+                return BadRequest(new { error = "Société introuvable." });
+
+            var rapport = new RapportFinancier
+            {
+                Annee = dto.Annee,
+                Type = dto.Type,
+                SocieteId = societeId
+            };
+
+            try
+            {
+                _serviceRapportFinancier.Add(rapport);
+                _serviceRapportFinancier.Commit();
+                return CreatedAtAction(nameof(GetById), new { id = rapport.Id }, new { id = rapport.Id });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(500, new { error = "Erreur serveur lors de la création du rapport.", detail = ex.Message, inner = ex.InnerException?.Message });
+            }
         }
 
         [Authorize(Roles = "Admin")]
